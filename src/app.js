@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import initializePassportGH from "./config/passportGithub.config.js";
-import sessionRouter from "./routes/session.routes.js";
+// import sessionRouter from "./routes/session.routes.js";
 import initializePassportJWT from "./config/passportJWT.config.js";
 import cors from "cors";
 
@@ -33,7 +33,7 @@ app.use(
     store: MongoStore.create({
       mongoUrl: DB_URL,
       mongoOptions: {
-        useNewUrlParser: true,
+        // useNewUrlParser: true,
       },
       ttl: 3600,
     }),
