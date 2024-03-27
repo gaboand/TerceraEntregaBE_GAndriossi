@@ -25,7 +25,7 @@ const initializePassportGH = () => {
             let user = await UserModel.findOne({ email: email });
             if (!user) {
               const newCart = await CartModel.create({});
-              user = new User({ 
+              user = new UserModel({ 
                 first_name: profile.displayName.split(" ")[0] || 'GitHub User',
                 last_name: profile.displayName.split(" ")[1] || '',
                 email: email,

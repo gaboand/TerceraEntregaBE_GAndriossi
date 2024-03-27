@@ -14,6 +14,7 @@ import sessionRouter from "./routes/session.routes.js";
 import initializePassportJWT from "./config/passportJWT.config.js";
 import cors from "cors";
 import dotenv from "dotenv";
+import nodemailer from "nodemailer";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -51,6 +52,32 @@ initializePassportJWT();
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.APP_PASSWORD,
+  },
+});
+
+app.get("/mail", async (req, res) => {
+  let result = await transporter.sendMail({
+    from: `Tienda <${process.env.EMAIL}>`,
+    to: "gaboandriossi@gmail.com",
+    subject: "Confirmaciòn de su compra",
+    text: "Hola, te condirmamos que recibimos tu pedido y esta siendo procesado",
+    html: `<div><h1 style='color: red'>Prueba de texto en HTML</h1><img src='cid:whisky' /></div>`,
+    attachments: [
+      {
+        filename: "whisky.jpg",
+        path: `${__dirname}/whisky.jpg`,
+        cid: "whisky",
+      },
+    ],
+  });
+  res.json({ status: "success", result });
+});
 
 const server = app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);

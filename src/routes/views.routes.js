@@ -7,7 +7,8 @@ import CartsManager from "../dao/memory/productManager.js";
 import passport from "passport";
 import {productsDao} from "../dao/index.js";
 import { cartsDao } from "../dao/index.js";
-
+import authUser from "../middlewares/authUser.js";
+import authAdmin from "../middlewares/authAdmin.js";
 
 const viewsRouter = Router();
 const cartDB = new CartDB();
@@ -16,7 +17,7 @@ const messageDB = new MessageDB();
 const productManager = new ProductsManager("src/products.json");
 const cartManager = new CartsManager("src/carts.json");
 
-viewsRouter.get("/products", async (req, res) => {
+viewsRouter.get("/products", authUser, async (req, res) => {
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 9;
     const { sort, category } = req.query;
@@ -60,7 +61,7 @@ viewsRouter.get("/products", async (req, res) => {
     }
 });
 
-viewsRouter.get("/chat", async (req, res) => {
+viewsRouter.get("/chat", authUser, async (req, res) => {
 	const messages = await messageDB.findMessages();
 
 	res.render("chat", {
@@ -70,7 +71,7 @@ viewsRouter.get("/chat", async (req, res) => {
 	});
 });
 
-viewsRouter.get("/carts/:id", async (req, res) => {
+viewsRouter.get("/carts/:id", authUser, async (req, res) => {
     try {
         const cartId = req.params.id;
         const detailedCart = await cartDB.getCartWithProductDetails(cartId);
@@ -105,15 +106,15 @@ viewsRouter.get("/forgot", (req, res) => {
     res.render("forgot");
 });
 
-viewsRouter.get("/github",
+viewsRouter.get("/github", authUser,
     passport.authenticate("github", { scope: ["user:email"] }),
   );
 
-  viewsRouter.get("/githubcallback",
+  viewsRouter.get("/githubcallback", authUser,
     passport.authenticate("github", { failureRedirect: "/login" }),
   );
 
-  viewsRouter.get("/realtimeproducts", async (req, res) => {
+  viewsRouter.get("/realtimeproducts", authAdmin, async (req, res) => {
 	const product = await productDB.getProducts();
 	res.render("realtime", {
 		title: "Productos en tiempo real",

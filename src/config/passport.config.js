@@ -1,6 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
-import {UserModel} from "../dao/mongo/models/user.model.js";
+import { UserModel } from "../dao/mongo/models/user.model.js";
 import { CartModel } from "../dao/mongo/models/carts.model.js"; 
 import { createHash, isValidPassword } from "../utils.js";
 

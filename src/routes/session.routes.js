@@ -123,12 +123,12 @@ sessionRouter.get("/privado", (req, res) => {
   }
 });
 
-sessionRouter.get("/privado", auth, (req, res) => {
-  res.render("products", {
-    title: "Privado",
-    user: req.session.user,
-  });
-});
+// sessionRouter.get("/privado", auth, (req, res) => {
+//   res.render("products", {
+//     title: "Privado",
+//     user: req.session.user,
+//   });
+// });
 
 sessionRouter.get('/forgot', (req, res) => {
   res.render('forgot');
