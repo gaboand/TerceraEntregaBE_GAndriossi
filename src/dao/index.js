@@ -8,11 +8,3 @@ const percistenceDao = config.persistence;
 
 export const productsDao = percistenceDao === "MONGO" ? new ProductDB() : new ProductsManager();
 export const cartsDao = percistenceDao === "MONGO" ? new CartDB() : new CartsManager();
-
-
-
-
-
-
-
-

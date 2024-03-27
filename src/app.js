@@ -10,14 +10,16 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import initializePassportGH from "./config/passportGithub.config.js";
-// import sessionRouter from "./routes/session.routes.js";
+import sessionRouter from "./routes/session.routes.js";
 import initializePassportJWT from "./config/passportJWT.config.js";
 import cors from "cors";
+import dotenv from "dotenv";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 const DB_URL = process.env.DB_URL;
 const COOKIESECRET = process.env.CODERSECRET;
+dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

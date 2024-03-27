@@ -5,6 +5,9 @@ import MessageDB from "../controllers/chat.controler.js";
 import ProductsManager from "../dao/memory/productManager.js";
 import CartsManager from "../dao/memory/productManager.js";
 import passport from "passport";
+import {productsDao} from "../dao/index.js";
+import { cartsDao } from "../dao/index.js";
+
 
 const viewsRouter = Router();
 const cartDB = new CartDB();
@@ -14,8 +17,9 @@ const productManager = new ProductsManager("src/products.json");
 const cartManager = new CartsManager("src/carts.json");
 
 viewsRouter.get("/products", async (req, res) => {
-    const { limit = 9, page = 1, sort, category } = req.query;
-
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 9;
+    const { sort, category } = req.query;
     const filter = {
         options: {
             lean: true,
@@ -28,16 +32,28 @@ viewsRouter.get("/products", async (req, res) => {
         }
     };
         try {
-            const products = await productDB.getPaginatedProducts(filter);
+            const productsData = await productsDao.getPaginatedProducts(filter);
+            console.log(productsData);
             res.render("products", {
                 title: "Listado de productos",
-                products: products,
+                products: productsData,
                 style: "css/products.css",
                 user: req.session.user,
                 name: req.session.name,
                 lastName: req.session.last_name,
-                welcomeMessage: `Bienvenido/a, ${req.session.name} ${req.session.last_name}!`
+                welcomeMessage: `Bienvenido/a, ${req.session.name} ${req.session.last_name}!`,
+                currentPage: productsData.currentPage,
+                hasNextPage: productsData.hasNextPage,
+                hasPrevPage: productsData.hasPrevPage,
+                nextPage: productsData.nextPage,
+                prevPage: productsData.prevPage,
+                totalPages: productsData.totalPages,
             });
+            console.log({
+                currentPage: productsData.currentPage,
+                prevPage: productsData.prevPage,
+                nextPage: productsData.nextPage,
+              });
 
         } catch (error) {
             res.status(500).send("Error al recuperar los productos");

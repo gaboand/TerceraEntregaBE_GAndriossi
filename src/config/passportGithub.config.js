@@ -1,5 +1,5 @@
 import passport from "passport";
-import {UserModel} from "../dao/mongo/models/user.model.js";
+import { UserModel } from "../dao/mongo/models/user.model.js";
 import { CartModel } from "../dao/mongo/models/carts.model.js";
 import GitHubStrategy from "passport-github2";
 

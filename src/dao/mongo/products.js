@@ -3,8 +3,9 @@ import { ProductsModel } from "../mongo/models/products.model.js";
 export default class ProductDB {
     async getProducts() { 
         try {
-            const product = await ProductsModel.find().lean();
-            return product;
+            const products = await ProductsModel.find().lean();
+            return products;
+            
         } catch (error) {
             throw error;
         }
@@ -13,12 +14,23 @@ export default class ProductDB {
     async getPaginatedProducts(filter) {
         try {
             filter.options.lean = true;
-            const product = await ProductsModel.paginate(filter.query, filter.options);
-            return product;
+            const paginatedResult = await ProductsModel.paginate(filter.query, filter.options);
+            // console.log(paginatedResult);
+            const products = paginatedResult.docs;
+            return { 
+                products: products,
+                currentPage: paginatedResult.page,
+                totalPages: paginatedResult.totalPages,
+                hasNextPage: paginatedResult.hasNextPage,
+                hasPrevPage: paginatedResult.hasPrevPage,
+                nextPage: paginatedResult.nextPage,
+                prevPage: paginatedResult.prevPage
+            };
         } catch (error) {
             throw error;
         }
     }
+    
     async getProductsById(id) {
         try {
             const product = await ProductsModel.findById(id).lean();
