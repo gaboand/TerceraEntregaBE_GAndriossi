@@ -1,5 +1,6 @@
 function authUser(req, res, next) {
     const userRole = req.session.role;
+
     if (!userRole) {
         return res.sendStatus(401);
     }

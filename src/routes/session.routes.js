@@ -38,7 +38,7 @@ sessionRouter.post("/login", async (req, res) => {
       req.session.user = email;
       req.session.name = user.first_name;
       req.session.last_name = user.last_name;
-      req.session.role = "user";
+      req.session.role = user.role;
       res.status(200).json({
         respuesta: "ok",
         cartId: user.cartId 
@@ -49,7 +49,7 @@ sessionRouter.post("/login", async (req, res) => {
 
 sessionRouter.get(
   "/github",
-  passport.authenticate("github", { scope: ["user:email"] }),
+  passport.authenticate("github", { scope: ["user:email"], }),
   async (req, res) => {}
 );
 
@@ -122,13 +122,6 @@ sessionRouter.get("/privado", (req, res) => {
       res.redirect("/login");
   }
 });
-
-// sessionRouter.get("/privado", auth, (req, res) => {
-//   res.render("products", {
-//     title: "Privado",
-//     user: req.session.user,
-//   });
-// });
 
 sessionRouter.get('/forgot', (req, res) => {
   res.render('forgot');

@@ -4,8 +4,8 @@ import jwt, { ExtractJwt } from "passport-jwt";
 const JWTStrategy = jwt.Strategy;
 
 const initializePassportJWT = () => {
-  passport.use(
-    "jwt",
+
+  passport.use( "jwt",
     new JWTStrategy(
       {
         jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),

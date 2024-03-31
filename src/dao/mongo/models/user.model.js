@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true, max: 100 },
   age: { type: Number, required: true, max: 100 },
   role: { type: String, required: true, max: 100, default: "user" },
-  cartId: {type: mongoose.Schema.Types.ObjectId, ref: "carts", required: true}, // cambie CartModel por carts
+  cartId: {type: mongoose.Schema.Types.ObjectId, ref: "carts", required: true},
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "orders" }],
 });
 

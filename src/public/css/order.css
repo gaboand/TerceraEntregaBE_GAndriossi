@@ -1,0 +1,31 @@
+
+.order__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #efeeee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+}
+
+.order__title{
+    text-align: center;
+    background-color: #11710f;
+    color: #e7e7e7;
+    padding: 20px;
+}
+
+.order__details,.order__products{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    font-size: 18px;
+    padding: 20px;
+    background-color: rgb(235, 235, 209);
+
+}

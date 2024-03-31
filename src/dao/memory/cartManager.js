@@ -164,14 +164,14 @@ export default class CartsManager {
 
     async emptyCart(cid) {
         try {
-            const carts = await this.getCarts(); // Añade await aquí
+            const carts = await this.getCarts(); 
             const cartIndex = carts.findIndex((cart) => cart.id == cid);
             if (cartIndex >= 0) {
                 carts[cartIndex].products = [];
             } else {
                 return null;
             }
-            await this.#saveCarts(carts); // Asegúrate de esperar que esta operación termine también
+            await this.#saveCarts(carts);
             return carts;
         } catch (error) {
             throw error;

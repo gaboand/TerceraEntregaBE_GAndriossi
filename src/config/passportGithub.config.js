@@ -8,16 +8,20 @@ const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL;
 
 const initializePassportGH = () => {
+
     passport.use(
       "github",
-      new GitHubStrategy({
+      new GitHubStrategy(
+        {
         clientID: GITHUB_CLIENT_ID,
         clientSecret: GITHUB_CLIENT_SECRET,
         callbackURL: GITHUB_CALLBACK_URL,
         scope: ["user:email"]
-      }, async (accessToken, refreshToken, profile, done) => {
+      },
+      async (accessToken, refreshToken, profile, done) => {
           try {
             const email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null;
+            console.log(email);
             if (!email) {
               return done(new Error("No se pudo obtener el correo electrónico de GitHub."), null);
             }
@@ -29,7 +33,7 @@ const initializePassportGH = () => {
                 first_name: profile.displayName.split(" ")[0] || 'GitHub User',
                 last_name: profile.displayName.split(" ")[1] || '',
                 email: email,
-                age: 18,
+                age: 1,
                 password: Math.random().toString(36).substring(7), 
                 cartId: newCart._id, 
               });

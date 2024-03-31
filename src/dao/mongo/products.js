@@ -15,7 +15,6 @@ export default class ProductDB {
         try {
             filter.options.lean = true;
             const paginatedResult = await ProductsModel.paginate(filter.query, filter.options);
-            // console.log(paginatedResult);
             const products = paginatedResult.docs;
             return { 
                 products: products,

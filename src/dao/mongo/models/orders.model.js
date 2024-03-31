@@ -12,7 +12,7 @@ const orderSchema = new mongoose.Schema({
     quantity: { type: Number, required: true, min: 1 }
   }],
   totalPrice: { type: Number, required: true },
-  status: { type: String, required: true },
+  status: { type: String, required: true, default: "pendiente" },
 });
 
 orderSchema.pre('save', async function (next) {
@@ -22,6 +22,5 @@ orderSchema.pre('save', async function (next) {
     next();
 });
 
-const OrderModel = mongoose.model(orderCollection, orderSchema);
+export const OrderModel = mongoose.model(orderCollection, orderSchema);
 
-export default OrderModel;

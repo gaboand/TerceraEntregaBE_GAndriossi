@@ -15,7 +15,7 @@ const saveCart = async (req, res) => {
 			message: error.message,
 		});
 	}
-}
+};
 
 const findById = async (req, res) => {
     const { id } = req.params;
@@ -56,6 +56,7 @@ const getCarts = async (req, res) => {
         });
     }
 };
+
 const getCartDetails = async (req, res) => {
     try {
         const { cid } = req.params;
@@ -116,7 +117,6 @@ const addProduct = async (req, res) => {
         });
     }
 };
-
 
 const deleteProduct = async (req, res) => {
     try {

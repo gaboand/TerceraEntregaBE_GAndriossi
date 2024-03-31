@@ -1,6 +1,7 @@
 function authAdmin(req, res, next) {
     const userRole = req.session.role;
-    if (!user) {
+
+    if (!userRole) {
         return res.sendStatus(401);
     }
     if (userRole === "admin") {

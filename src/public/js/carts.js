@@ -11,7 +11,6 @@ function emptyCart() {
             .then(data => {
                 if (data.success) {
                     console.log("Carrito vaciado con éxito");
-                    loadCartDetails();
                     updateCartUI({ total: 0, totalProducts: 0 });
                 } else {
                     console.error(data.message);
@@ -32,7 +31,6 @@ function deleteProductFromCart(productId) {
             .then(data => {
                 if (data.success) {
                     console.log(`Producto ${productId} eliminado con éxito del carrito`);
-                    loadCartDetails();
                 } else {
                     console.error(data.message);
                 }
@@ -71,7 +69,6 @@ function updateQuantityOnServer(productId, newQuantity) {
     .then(data => {
         if (data.success) {
             console.log("Cantidad del producto actualizada con éxito");
-            loadCartDetails();
         } else {
             console.error(data.message);
         }
@@ -91,52 +88,24 @@ function updateCartUI(cart) {
     }
 }
 
-async function loadCartDetails() {
-    const cartId = getCartId();
-    if (!cartId) {
-        console.log("No se encontró el cartId");
-        return;
-    }
+function finalizePurchase(cartId) {
+    fetch(`/api/orders/fromcart/${cartId}`, { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Orden creada con éxito");
 
-    try {
-        const response = await fetch(`/api/carts/${cartId}`);
-        const cart = await response.json();
-
-        const productList = document.querySelector('.cart__productList');
-        productList.innerHTML = '';
-        updateCartUI(cart);
-
-        if (cart.products && cart.products.length > 0) {
-            cart.products.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'cart__productCard';
-                productCard.innerHTML = `
-                    <div class="cart__cardProduct__image">
-                        <img src="${product.productId.thumbnail}" alt="${product.productId.title}" />
-                    </div>
-                    <div>
-                        <h3 class="cart__nombreProducto">${product.productId.title}</h3>
-                        <p class="cart__detalleProducto">${product.productId.description}</p>
-                        <p class="cart__detalleProducto">Precio: $${product.productId.price}</p>
-                        <p class="cart__detalleProducto">Cantidad: ${product.quantity}</p>
-                        <div class="cartControl">
-                            <button class="boton_menos" type="button" onclick="updateCartQuantity('minus', '${product.productId._id}')">-</button>
-                            <input type="number" id="quantity-${product.productId._id}" name="quantity" min="1" value="${product.quantity}" class="cantidad" />
-                            <button class="boton_mas" type="button" onclick="updateCartQuantity('plus', '${product.productId._id}')">+</button>
-                        </div>
-                    </div>
-                    <div class="cart__cardProduct__delete">
-                        <button class="cart__btnDelete" data-id="${product._id}" onclick="deleteProductFromCart('${product._id}')">X</button>
-                    </div>
-                `;
-                productList.appendChild(productCard);
-            });
-        } else {
-            productList.innerHTML = '<p>No hay productos en el carrito.</p>';
-        }
-    } catch (error) {
-        console.error('Error al cargar los detalles del carrito:', error);
-    }
+                window.location.href = `/orders/${data.order._id}`;
+            } else {
+                console.error(data.message);
+                alert("Hubo un error al finalizar la compra. Por favor, intenta de nuevo.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Error al procesar la compra.");
+        });
 }
 
-document.addEventListener('DOMContentLoaded', loadCartDetails);
+
+document.addEventListener('DOMContentLoaded');

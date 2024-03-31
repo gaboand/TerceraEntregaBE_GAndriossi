@@ -33,7 +33,6 @@ async function addToCart(productId)  {
             })
         });
         const data = await response.json();
-        console.log(data);
         alert('Producto agregado al carrito');
     } catch (error) {
         console.error('Error al agregar el producto al carrito:', error);
@@ -74,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
 
   document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);

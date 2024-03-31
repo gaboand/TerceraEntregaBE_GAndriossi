@@ -7,8 +7,10 @@ import CartsManager from "../dao/memory/productManager.js";
 import passport from "passport";
 import {productsDao} from "../dao/index.js";
 import { cartsDao } from "../dao/index.js";
+import { ordersDao } from "../dao/index.js";
 import authUser from "../middlewares/authUser.js";
 import authAdmin from "../middlewares/authAdmin.js";
+import authOrder from "../middlewares/authOrder.js";
 
 const viewsRouter = Router();
 const cartDB = new CartDB();
@@ -34,7 +36,7 @@ viewsRouter.get("/products", authUser, async (req, res) => {
     };
         try {
             const productsData = await productsDao.getPaginatedProducts(filter);
-            console.log(productsData);
+
             res.render("products", {
                 title: "Listado de productos",
                 products: productsData,
@@ -50,11 +52,6 @@ viewsRouter.get("/products", authUser, async (req, res) => {
                 prevPage: productsData.prevPage,
                 totalPages: productsData.totalPages,
             });
-            console.log({
-                currentPage: productsData.currentPage,
-                prevPage: productsData.prevPage,
-                nextPage: productsData.nextPage,
-              });
 
         } catch (error) {
             res.status(500).send("Error al recuperar los productos");
@@ -106,11 +103,11 @@ viewsRouter.get("/forgot", (req, res) => {
     res.render("forgot");
 });
 
-viewsRouter.get("/github", authUser,
+viewsRouter.get("/github",
     passport.authenticate("github", { scope: ["user:email"] }),
   );
 
-  viewsRouter.get("/githubcallback", authUser,
+  viewsRouter.get("/githubcallback",
     passport.authenticate("github", { failureRedirect: "/login" }),
   );
 
@@ -121,6 +118,40 @@ viewsRouter.get("/github", authUser,
 		product: product,
 		style: "css/products.css",
 	});
+});
+
+
+viewsRouter.get("/carts/:id", authUser, async (req, res) => {
+    try {
+        const cartId = req.params.id;
+        const detailedCart = await cartDB.getCartWithProductDetails(cartId);
+
+        res.render("carts", {
+            title: "Detalle del Carrito",
+            detailedCart: detailedCart,
+            style: "css/cart.css",
+        });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+viewsRouter.get("/orders/:orderId", authOrder, async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        const order = await ordersDao.getOrderById(orderId);
+
+        const detailsOrder = order ? order.toObject() : null;
+
+        res.render("orders", {
+            title: "Detalles de la Orden",
+            orderDetails: detailsOrder,
+            style: "css/order.css",
+        });
+    } catch (error) {
+        console.log("Error al obtener los detalles de la orden:", error);
+        res.status(500).send("Error al recuperar los detalles de la orden");
+    }
 });
 
 export default viewsRouter;

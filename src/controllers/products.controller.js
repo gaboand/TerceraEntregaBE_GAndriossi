@@ -1,6 +1,5 @@
 import {productsDao} from "../dao/index.js"
 
-
 const getProducts = async (req, res) => {
     try {
         const { limit = 9, page = 1, sort, category } = req.query;
@@ -21,7 +20,7 @@ const getProducts = async (req, res) => {
 
         const productsData = await productsDao.getPaginatedProducts(filter);
         const { products } = productsData;
-        console.log(productsData);
+
         if (products.length < 1) {
             res.status(404).json({
                 success: false,

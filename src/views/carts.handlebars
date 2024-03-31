@@ -3,6 +3,8 @@
     <h1 class="cart__title">Detalle del Carrito</h1>
     <a class="carritoButton" href="/logout">Cerrar Sesión</a> 
     <button onclick="window.history.back();" class="carritoButton">Volver</button>
+    <button class="carritoButton" onclick="finalizePurchase('{{detailedCart._id}}')">Finalizar Compra</button>
+
   </div>
   <div class="cart__total">
       <div class="cart__summary">

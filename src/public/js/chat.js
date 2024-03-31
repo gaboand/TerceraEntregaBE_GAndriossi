@@ -6,7 +6,6 @@ let user;
 const socket = io();
 
 document.addEventListener("DOMContentLoaded", () => {
-	console.log("DOM completamente cargado y analizado");
 	const userInput = prompt("Ingresa tu usuario") || "";
 
 	if (!userInput) {

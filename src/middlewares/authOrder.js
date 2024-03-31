@@ -1,12 +1,11 @@
 function authOrder(req, res, next) {
     console.log(req.session)
     const user = req.session.user;
-    console.log(user)
     if (!user) {
         return res.sendStatus(401);
     }
     if (user) {
-        console.log( "created order: " + user);
+        console.log( "Orden creada para: " + user);
         req.user = user;
         return next();
     } else {

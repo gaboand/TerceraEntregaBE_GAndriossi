@@ -1,0 +1,24 @@
+    <main class="order__container">
+        <h1 class="order__title">Confirmación de la Orden</h1>
+                <div class="order__actions">
+            <a href="/products" class="carritoButton">Continuar Comprando</a>
+        </div>
+        <div class="order__details">
+            <h2>Detalles de la Orden:</h2>
+            <p>Número de Orden: {{orderDetails.code}}</p>
+            <p>Fecha de Compra: {{orderDetails.purchase_datetime}}</p>
+            <p>Estado de la Orden: {{orderDetails.status}}</p>
+            <p>Total de la compra: ${{orderDetails.totalPrice}}</p>
+        </div>
+        <div class="order__products">
+            <h2>Productos Comprados:</h2>
+            {{#each orderDetails.products}}
+            <div class="product__detail">
+                <h3>Producto: {{this.productId}}</h3>
+                <p>Cantidad: {{this.quantity}}</p>
+            </div>
+            {{/each}}
+        </div>
+    </main>
+    <script src="/js/script.js"></script> 
+
