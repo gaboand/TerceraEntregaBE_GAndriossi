@@ -75,5 +75,27 @@ export default class ProductDB {
             throw error;
         }
     }
+
+    async updateProductStock(productId, quantityChange) {
+        try {
+            const product = await ProductsModel.findById(productId);
+            if (!product) {
+                console.log("Producto no encontrado:", productId);
+                return null;
+            }
+            
+            const newStock = product.stock + quantityChange;
+            if (newStock < 0) {
+                console.error("Stock no puede ser negativo:", productId);
+                return null;
+            }
+    
+            return await this.updateProduct(productId, { stock: newStock });
+        } catch (error) {
+            console.error("Error al actualizar el stock del producto:", error);
+            throw error;
+        }
+    }
+    
 }
 

@@ -1,48 +1,68 @@
 import { ordersDao } from "../dao/index.js";
 import { cartsDao } from "../dao/index.js";
 import { UserModel } from "../dao/mongo/models/user.model.js";
+import { productsDao } from "../dao/index.js";
 
 export const createOrderFromCart = async (req, res) => {
   try {
       const { cid } = req.params;
-      const cart = await cartsDao.getCartWithProductDetails(cid);   
+      const cart = await cartsDao.getCartWithProductDetails(cid);
       if (!cart) {
           return res.status(404).json({ message: "Carrito no encontrado" });
       }
-      
-      const user = await UserModel.findOne({ cartId: cid });
-      if (!user) {
-          return res.status(404).json({ message: "Usuario no encontrado para el carrito proporcionado" });
-      }
-  
-      const orderCode = (Math.random().toString(16) + '000000000').substr(2, 10).toUpperCase();
-  
-      let totalPrice = 0;
-      cart.products.forEach(product => {
-          totalPrice += product.quantity * product.productId.price;
-      });
-  
-      const newOrder = await ordersDao.createOrder({
-          code: orderCode,
-          cart: cart._id,
-          user: user._id,
-          products: cart.products.map(product => ({
-              productId: product.productId._id,
-              quantity: product.quantity
-          })),
-          totalPrice: totalPrice,
-          status: "Pendiente"
-      });
-  
-      await UserModel.findByIdAndUpdate(user._id, {
-          $push: { orders: newOrder._id }
-      });
 
-      return res.status(201).json({
-          success: true,
-          message: "Orden creada con éxito",
-          order: newOrder
-      });
+      if (cart.products.length === 0) {
+          return res.status(400).json({ message: "El carrito está vacío, no se puede generar la orden." });
+      }
+
+      let productosAjustados = [];
+      let productosSinStockSuficiente = [];
+      let totalPrice = 0;
+
+      for (let product of cart.products) {
+          const productoEnStock = await productsDao.getProductsById(product.productId._id);
+          if (productoEnStock && productoEnStock.stock > 0) {
+              const cantidadDisponible = Math.min(product.quantity, productoEnStock.stock);
+              productosAjustados.push({
+                  productId: product.productId._id,
+                  quantity: cantidadDisponible,
+                  price: product.productId.price
+              });
+              totalPrice += cantidadDisponible * product.productId.price;
+          } else {
+              productosSinStockSuficiente.push(product.productId.title);
+          }
+      }
+
+      if (productosAjustados.length > 0) {
+          const orderCode = (Math.random().toString(16) + '000000000').substr(2, 10).toUpperCase();
+          const newOrder = await ordersDao.createOrder({
+              code: orderCode,
+              cart: cart._id,
+              user: req.session.user._id,
+              products: productosAjustados,
+              totalPrice: totalPrice,
+              status: "Pendiente"
+          });
+
+          await UserModel.findByIdAndUpdate(req.session.user._id, { $push: { orders: newOrder._id } });
+
+          let message = "Orden creada con éxito.";
+          if (productosSinStockSuficiente.length > 0) {
+              message += " Algunos productos no estaban disponibles o tenían stock limitado y fueron ajustados: " + productosSinStockSuficiente.join(", ");
+          }
+
+          return res.status(201).json({
+              success: true,
+              message: message,
+              order: newOrder
+          });
+      } else {
+          return res.status(400).json({
+              success: false,
+              message: "No fue posible procesar la orden debido a falta de stock.",
+          });
+      }
   } catch (error) {
       console.error("Error al crear la orden desde el carrito", error);
       return res.status(500).json({
@@ -51,6 +71,7 @@ export const createOrderFromCart = async (req, res) => {
       });
   }
 };
+
 export const getOrders = async (req, res) => {
   try {
     const orders = await ordersDao.getOrders();
@@ -87,5 +108,44 @@ export const resolveOrder = async (req, res) => {
       error: error.message,
     });
   }
-};
+}
+
+  export const payment = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await ordersDao.getOrderById(orderId);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Orden no encontrada' });
+        }
+
+        for (const item of order.products) {
+            const product = await productsDao.getProductsById(item.productId);
+            if (product && product.stock >= item.quantity) {
+                await productsDao.updateProductStock(item.productId, -item.quantity);
+            } else {
+                return res.status(400).json({ message: `No hay suficiente stock para el producto ${product.title}` });
+            }
+        }
+
+        await cartsDao.emptyCart(order.cart);
+
+        const updatedOrder = await ordersDao.resolveOrder(orderId, { status: 'Pagado' });
+         
+        res.json({
+            success: true,
+            message: 'Pago procesado correctamente',
+            orderDetails: {
+                orderId: order._id,
+                products: order.products,
+                total: order.totalPrice,
+            }
+        });
+    } catch (error) {
+        console.error('Error al procesar el pago:', error);
+        res.status(500).json({ success: false, message: 'Error al procesar el pago' });
+    }
+
+}
+
 
