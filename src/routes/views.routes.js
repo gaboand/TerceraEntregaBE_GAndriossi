@@ -6,7 +6,6 @@ import ProductsManager from "../dao/memory/productManager.js";
 import CartsManager from "../dao/memory/productManager.js";
 import passport from "passport";
 import {productsDao} from "../dao/index.js";
-import { cartsDao } from "../dao/index.js";
 import { ordersDao } from "../dao/index.js";
 import authUser from "../middlewares/authUser.js";
 import authAdmin from "../middlewares/authAdmin.js";

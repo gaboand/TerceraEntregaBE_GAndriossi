@@ -1,6 +1,5 @@
 import express from "express";
 import {UserModel} from "../dao/mongo/models/user.model.js";;
-import { auth } from "../middlewares/index.js";
 import { createHash, isValidPassword, generateToken, passportCall, authorization } from "../utils.js";
 import passport from "passport";
 
@@ -13,7 +12,7 @@ sessionRouter.post("/signup", (req, res, next) => {
     }
     if (!user) {
       return res.status(400).json({ error: info.message });
-    }
+    } 
     return res.status(200).json({ message: "Usuario creado con éxito" });
   })(req, res, next);
 });
@@ -34,7 +33,6 @@ sessionRouter.post("/login", async (req, res) => {
 
     req.login(user, function(err) {
       if (err) { return next(err); }
-
       req.session.user = email;
       req.session.name = user.first_name;
       req.session.last_name = user.last_name;

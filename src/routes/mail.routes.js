@@ -4,7 +4,7 @@ import { __dirname } from "../utils.js";
 
 const mailRouter = express.Router();
 
-mailRouter.get("/mail", async (req, res) => {
+mailRouter.post("/mail", async (req, res) => {
     let result = await transporter.sendMail({
       from: `Tienda <${process.env.EMAIL}>`,
       to: "gaboandriossi@gmail.com",

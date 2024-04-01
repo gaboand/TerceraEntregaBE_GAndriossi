@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema({
   code: { type: String, unique: true, required: true },
   purchase_datetime: { type: Date, default: Date.now }, 
   cart: { type: mongoose.Schema.Types.ObjectId, ref: "carts" },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "users" }, 
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "users"}, 
   products: [{
     productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Products', required: true },
     quantity: { type: Number, required: true, min: 1 }

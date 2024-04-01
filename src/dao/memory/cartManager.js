@@ -14,7 +14,6 @@ export default class CartsManager {
         this.#cartsFilePath = path.join(__dirname, filePath);
     }
     
-
 	async createCart() {
     try {
         const newCart = {
@@ -31,6 +30,7 @@ export default class CartsManager {
         throw error;
     }
 	}
+
 	async getCarts() {
     try {
         if (fs.existsSync(this.#cartsFilePath)) {
@@ -63,10 +63,10 @@ export default class CartsManager {
         );
 
         return cart;
-    } catch (error) {
-        throw error;
+        } catch (error) {
+            throw error;
+        }
     }
-}
 
 	async addProductToCart(cid, pid) {
 		try {
@@ -90,7 +90,7 @@ export default class CartsManager {
         await this.#saveCarts(carts);
 
         return cart;
-    } catch (error) {
+        } catch (error) {
         console.log(error);
         throw error;
 		}

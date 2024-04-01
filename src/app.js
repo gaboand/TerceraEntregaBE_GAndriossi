@@ -51,7 +51,6 @@ initializePassportJWT();
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 const server = app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });

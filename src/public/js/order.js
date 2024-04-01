@@ -5,7 +5,7 @@ document.getElementById('payOrder').addEventListener('click', () => {
         .then(response => response.json())
         .then(data => {
             alert('Pago realizado con éxito');
-            window.location.href = '/products';//`/orderSuccess/${orderId}`; // pagina de producto pagado
+            window.location.href = '/products';
         })
         .catch(error => {
             console.error('Error:', error);

@@ -43,10 +43,10 @@ export default class ProductsManager {
 				return { products }; 
         }
         return { products: [] };
-    } catch (error) {
-        throw error;
-    }
-}
+    	} catch (error) {
+        	throw error;
+    	}
+	}
 
 	async getProductsById(id) {
 		try {
@@ -62,7 +62,6 @@ export default class ProductsManager {
 			throw error;
 		}
 	}
-
 
 	async deleteProductById(id) {
 		try {
@@ -128,7 +127,6 @@ export default class ProductsManager {
 			throw error;
 		}
 	}
-
 
 	async #saveProducts(products) {
 		try {

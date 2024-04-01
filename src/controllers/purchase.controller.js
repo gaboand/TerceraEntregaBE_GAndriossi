@@ -2,6 +2,7 @@ import { ordersDao } from "../dao/index.js";
 import { cartsDao } from "../dao/index.js";
 import { UserModel } from "../dao/mongo/models/user.model.js";
 import { productsDao } from "../dao/index.js";
+import { sendConfirmationEmail } from "../controllers/mail.controller.js";
 
 export const createOrderFromCart = async (req, res) => {
   try {
@@ -127,11 +128,13 @@ export const resolveOrder = async (req, res) => {
                 return res.status(400).json({ message: `No hay suficiente stock para el producto ${product.title}` });
             }
         }
-
+        
         await cartsDao.emptyCart(order.cart);
 
         const updatedOrder = await ordersDao.resolveOrder(orderId, { status: 'Pagado' });
-         
+        const userEmail = req.session.user;
+        await sendConfirmationEmail(userEmail, order._id, order.totalPrice);
+
         res.json({
             success: true,
             message: 'Pago procesado correctamente',

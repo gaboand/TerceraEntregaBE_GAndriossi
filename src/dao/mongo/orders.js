@@ -1,6 +1,4 @@
 import { OrderModel } from "./models/orders.model.js";
-import { CartModel } from "./models/carts.model.js";
-import { UserModel } from "./models/user.model.js";
 
 export default class OrderDB {
 

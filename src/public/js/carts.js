@@ -76,7 +76,6 @@ function updateQuantityOnServer(productId, newQuantity) {
     .catch(error => console.error('Error:', error));
 }
 
-
 function updateCartUI(cart) {
 
     const totalElement = document.getElementById('cartTotal');
@@ -106,6 +105,5 @@ function finalizePurchase(cartId) {
             alert("Error al procesar la compra.");
         });
 }
-
 
 document.addEventListener('DOMContentLoaded');
