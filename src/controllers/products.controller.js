@@ -1,4 +1,7 @@
 import {productsDao} from "../dao/index.js"
+import CustomError from "../services/CustomError.js";
+import enumErrors from "../services/enum.js";
+import { generateAddProductErrorInfo , generateFindProductErrorInfo } from "../services/info.js";
 
 const getProducts = async (req, res) => {
     try {
@@ -49,9 +52,11 @@ const getProductId = async (req, res) => {
         const product = await productsDao.getProductsById(pid);
 
         if (!product) {
-            res.status(404).json({
-                success: false,
+            CustomError.createError({
+                name: "Error al buscar el producto",
+                cause: generateFindProductErrorInfo(pid),
                 message: "Producto no encontrado",
+                code: enumErrors.FINDING_PRODUCT_ERROR,
             });
             return;
         }
@@ -72,6 +77,16 @@ const getProductId = async (req, res) => {
 const saveProducts = async (req, res) => {
     try {
         const productData = req.body;
+
+        if (!productData.title || !productData.description || !productData.code || !productData.price || !productData.stock || !productData.category) {
+            CustomError.createError({
+                name: "Error creando el producto",
+                cause: generateAddProductErrorInfo(req.body),
+                message: "Uno o más campos son inválidos",
+                code: enumErrors.ADDING_PRODUCT_ERROR,
+            });
+        }
+
         const newProduct = await productsDao.createProduct(productData);
 
         if (!newProduct) {
@@ -147,7 +162,3 @@ const deleteProducts = async (req, res) => {
 };
 
 export { getProducts, getProductId, saveProducts, updateProducts, deleteProducts };
-
-
-
-
