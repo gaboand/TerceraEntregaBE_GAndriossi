@@ -13,6 +13,7 @@ import initializePassportGH from "./config/passportGithub.config.js";
 import initializePassportJWT from "./config/passportJWT.config.js";
 import cors from "cors";
 import dotenv from "dotenv";
+import { addLogger } from "./middlewares/logger.js";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -63,6 +64,17 @@ app.use((req, res, next) => {
 });
 
 app.use("/", IndexRouter);
+
+app.use(addLogger);
+app.get('/loggerTest', (req, res) => {
+    req.logger.debug('Depurar');
+    req.logger.http('Mensaje HTTP');
+    req.logger.info('Mensaje informativo');
+    req.logger.warn('Mensaje de advertencia');
+    req.logger.error('Error detectado');
+    req.logger.log('fatal', 'Alerta maxima');
+    res.send('Testing logger realizado');
+});
 
 app.use(cors({ 
   origin: ["http://localhost:3000", "http://127.0.0.1:5500"]
