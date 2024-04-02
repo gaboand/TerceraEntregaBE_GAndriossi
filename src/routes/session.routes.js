@@ -2,14 +2,19 @@ import express from "express";
 import {UserModel} from "../dao/mongo/models/user.model.js";;
 import { createHash, isValidPassword, generateToken, passportCall, authorization } from "../utils.js";
 import passport from "passport";
-import { addLogger} from "../middlewares/logger.js";
+import {addLogger} from "../middlewares/logger.js";
 
 const sessionRouter = express.Router();
 sessionRouter.use(addLogger);
 
 
 sessionRouter.post("/signup", (req, res, next) => {
-  req.logger.http('Mensaje HTTP');
+    req.logger.debug('Depurar');
+    req.logger.http('Mensaje HTTP');
+    req.logger.info('Mensaje informativo');
+    req.logger.warn('Mensaje de advertencia');
+    req.logger.error('Error detectado');
+    req.logger.log('fatal', 'Alerta maxima');
   passport.authenticate("register", (err, user, info) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -22,6 +27,12 @@ sessionRouter.post("/signup", (req, res, next) => {
 });
 
 sessionRouter.post("/login", async (req, res) => {
+  req.logger.debug('Depurar');
+  req.logger.http('Mensaje HTTP');
+  req.logger.info('Mensaje informativo');
+  req.logger.warn('Mensaje de advertencia');
+  req.logger.error('Error detectado');
+  req.logger.log('fatal', 'Alerta maxima');
   const { email, password } = req.body;
   const user = await UserModel.findOne({ email });
 
