@@ -1,11 +1,15 @@
 import express from "express";
 import {UserModel} from "../dao/mongo/models/user.model.js";;
 import { createHash, isValidPassword, generateToken, passportCall, authorization } from "../utils.js";
-import passport from "passport";
+import passport, { session } from "passport";
+import {addLogger} from "../middlewares/logger.js";
 
 const sessionRouter = express.Router();
+session.use(addLogger);
+
 
 sessionRouter.post("/signup", (req, res, next) => {
+  req.logger.http('Mensaje HTTP');
   passport.authenticate("register", (err, user, info) => {
     if (err) {
       return res.status(500).json({ error: err.message });
