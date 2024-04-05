@@ -52,19 +52,6 @@ initializePassportJWT();
 app.use(passport.initialize());
 app.use(passport.session());
 
-const server = app.listen(PORT, () => {
-    console.log(`Servidor escuchando en el puerto ${PORT}`);
-});
-
-const io = new Server(server);
-
-app.use((req, res, next) => {
-	req.io = io;
-	next();
-});
-
-app.use("/", IndexRouter);
-
 app.use(addLogger);
 app.get('/loggerTest', (req, res) => {
     req.logger.debug('Depurar');
@@ -74,6 +61,19 @@ app.get('/loggerTest', (req, res) => {
     req.logger.error('Error detectado');
     req.logger.log('fatal', 'Alerta maxima');
     res.send('Testing logger realizado');
+});
+
+app.use("/", IndexRouter);
+
+const server = app.listen(PORT, () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
+});
+
+const io = new Server(server);
+
+app.use((req, res, next) => {
+	req.io = io;
+	next();
 });
 
 app.use(cors({ 

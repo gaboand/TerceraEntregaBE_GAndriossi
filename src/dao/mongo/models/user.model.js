@@ -11,6 +11,8 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, required: true, max: 100, default: "user" },
   cartId: {type: mongoose.Schema.Types.ObjectId, ref: "carts", required: true},
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "orders" }],
+  resetPasswordToken: { type: String, required: false },
+  resetPasswordExpires: { type: Date, required: false },
 });
 
 UserSchema.pre("find", function (next) {

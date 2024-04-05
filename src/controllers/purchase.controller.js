@@ -40,13 +40,14 @@ export const createOrderFromCart = async (req, res) => {
           const newOrder = await ordersDao.createOrder({
               code: orderCode,
               cart: cart._id,
-              user: req.session.user._id,
+              user: req.session.passport.user,
               products: productosAjustados,
               totalPrice: totalPrice,
               status: "Pendiente"
           });
+          console.log("Orden creada:", newOrder);
 
-          await UserModel.findByIdAndUpdate(req.session.user._id, { $push: { orders: newOrder._id } });
+          await UserModel.findByIdAndUpdate(req.session.passport.user, { $push: { orders: newOrder._id } });
 
           let message = "Orden creada con éxito.";
           if (productosSinStockSuficiente.length > 0) {

@@ -32,3 +32,12 @@ export async function sendConfirmationEmail(to, orderId, total) {
       throw error; 
   }
 }
+
+export async function sendPasswordResetEmail(to, link) {
+  await transporter.sendMail({
+      from: `Soporte <${process.env.EMAIL_SUPPORT}>`,
+      to: to,
+      subject: 'Instrucciones para restablecer tu contraseña',
+      html: `Hola,<br><br>Recibimos una solicitud para restablecer tu contraseña. Por favor, haz clic en el siguiente enlace para establecer una nueva contraseña: <a href="${link}">Restablecer Contraseña</a><br><br>Si tú no solicitaste esto, por favor ignora este correo electrónico.<br><br>Saludos,<br>Tu Equipo de Soporte`
+  });
+}

@@ -5,6 +5,7 @@ import { generateAddProductErrorInfo , generateFindProductErrorInfo } from "../s
 
 const getProducts = async (req, res) => {
     try {
+        req.logger.http("Mensaje HTTP: Get Products");
         const { limit = 9, page = 1, sort, category } = req.query;
         const filter = {
             options: {

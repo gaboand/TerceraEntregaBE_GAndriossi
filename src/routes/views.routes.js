@@ -102,6 +102,15 @@ viewsRouter.get("/forgot", (req, res) => {
     res.render("forgot");
 });
 
+viewsRouter.get("/reset/:token", async (req, res) => {
+    const { token } = req.params;
+    res.render("reset", {
+        title: "Restablecer Contraseña",
+        token: token 
+    });
+});
+
+
 viewsRouter.get("/github",
     passport.authenticate("github", { scope: ["user:email"] }),
   );

@@ -1,11 +1,12 @@
 import { Router } from "express";
 import  MessagesDB from "../controllers/chat.controler.js";
+import authUser from "../middlewares/authUser.js";
 
 const messagesRouter = Router();
 const messagesDB = new MessagesDB();
 
 
-messagesRouter.post("/", async (req, res) => {
+messagesRouter.post("/", authUser,async (req, res) => {
   const { user, message } = req.body;
   try {
       const response = await messagesDB.createMessage({ user, message });

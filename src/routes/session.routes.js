@@ -3,6 +3,9 @@ import {UserModel} from "../dao/mongo/models/user.model.js";;
 import { createHash, isValidPassword, generateToken, passportCall, authorization } from "../utils.js";
 import passport from "passport";
 import {addLogger} from "../middlewares/logger.js";
+import crypto from "crypto";
+import { sendPasswordResetEmail } from '../controllers/mail.controller.js';
+import bcrypt from "bcrypt";
 
 const sessionRouter = express.Router();
 sessionRouter.use(addLogger);
@@ -141,19 +144,55 @@ sessionRouter.get('/forgot', (req, res) => {
 });
 
 sessionRouter.post('/forgot', async (req, res) => {
-  const { email, newPassword } = req.body;
+  const { email } = req.body;
+  const user = await UserModel.findOne({ email: email });
+  if (!user) {
+      return res.status(404).json({ message: 'No se encuentra el usuario con ese correo electrónico.' });
+  }
+
+  const resetToken = crypto.randomBytes(20).toString('hex');
+  user.resetPasswordToken = resetToken;
+  user.resetPasswordExpires = Date.now() + 60000; // 1 hora 3600000
+
+  await user.save();
+
+  const resetURL = `http://localhost:3000/reset/${resetToken}`;
+  await sendPasswordResetEmail(user.email, resetURL);
+
+  res.status(200).json({ message: 'Se ha enviado un correo electrónico con las instrucciones para restablecer la contraseña.' });
+});
+
+
+sessionRouter.post('/reset/:token', async (req, res) => {
+  const { token } = req.params;
+  const { newPassword, confirmNewPassword } = req.body;
+
+  if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ error: 'Las contraseñas no coinciden.' });
+  }
+
   try {
-      const user = await UserModel.findOne({ email: email });
+      const user = await UserModel.findOne({
+          resetPasswordToken: token,
+          resetPasswordExpires: { $gt: Date.now() }
+      });
+
       if (!user) {
-          return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+        return res.status(400).json({ error: 'Token de restablecimiento de contraseña inválido o expirado.', redirect: '/forgot' });
       }
-      const hashedPassword = createHash(newPassword); 
-      await UserModel.updateOne({ email: email }, { $set: { password: hashedPassword } });
-      res.json({ success: true, message: "ok" });
-       
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+      user.password = hashedPassword;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+      await user.save();
+
+      res.json({ message: 'La contraseña ha sido actualizada con éxito.' });
   } catch (error) {
-      console.error("Error al actualizar la contraseña:", error);
-      res.status(500).send('Error al procesar tu solicitud');
+      console.error(error);
+      res.status(500).json({ error: 'Error al restablecer la contraseña.' });
   }
 });
 
