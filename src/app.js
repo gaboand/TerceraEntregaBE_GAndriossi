@@ -14,12 +14,33 @@ import initializePassportJWT from "./config/passportJWT.config.js";
 import cors from "cors";
 import dotenv from "dotenv";
 import { addLogger } from "./middlewares/logger.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
+
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 const DB_URL = process.env.DB_URL;
 const COOKIESECRET = process.env.CODERSECRET;
 dotenv.config();
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Ecommerce API",
+      version: "1.0.0",
+      description: "API para Ecommerce",
+      contact: {
+        name: "G Andriossi",
+      },
+      servers: ["http://localhost:3000"],
+    }},
+
+  apis: [`${__dirname}/docs/**/*.yaml`]
+};
+
+const specs = swaggerJSDoc(swaggerOptions);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -62,6 +83,8 @@ app.get('/loggerTest', (req, res) => {
     req.logger.log('fatal', 'Alerta maxima');
     res.send('Testing logger realizado');
 });
+
+app.use("/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 app.use("/", IndexRouter);
 

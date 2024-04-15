@@ -4,31 +4,37 @@ import { createHash, isValidPassword, generateToken, passportCall, authorization
 import passport from "passport";
 import {addLogger} from "../middlewares/logger.js";
 import crypto from "crypto";
-import { sendPasswordResetEmail } from '../controllers/mail.controller.js';
+import { sendPasswordResetEmail, sendWelcomeEmail } from '../controllers/mail.controller.js';
 import bcrypt from "bcrypt";
 
 const sessionRouter = express.Router();
 sessionRouter.use(addLogger);
 
 
-sessionRouter.post("/signup", (req, res, next) => {
+sessionRouter.post("/signup", async (req, res, next) => {
     req.logger.debug('Depurar');
     req.logger.http('Mensaje HTTP');
     req.logger.info('Mensaje informativo');
     req.logger.warn('Mensaje de advertencia');
     req.logger.error('Error detectado');
     req.logger.log('fatal', 'Alerta maxima');
-  passport.authenticate("register", (err, user, info) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    if (!user) {
-      return res.status(400).json({ error: info.message });
-    } 
-    return res.status(200).json({ message: "Usuario creado con éxito" });
-  })(req, res, next);
-});
-
+    passport.authenticate("register", async (err, user, info) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      if (!user) {
+        return res.status(400).json({ error: info.message });
+      }
+      try {
+        await sendWelcomeEmail(user.email, user.first_name || "Usuario");
+      } catch (error) {
+        console.error("Error al enviar el correo de bienvenida:", error);
+      }
+      return res.status(200).json({ message: "Usuario creado con éxito. Correo de bienvenida enviado." });
+    
+    })(req, res, next);
+  });
+  
 sessionRouter.post("/login", async (req, res) => {
   req.logger.debug('Depurar');
   req.logger.http('Mensaje HTTP');
@@ -152,7 +158,7 @@ sessionRouter.post('/forgot', async (req, res) => {
 
   const resetToken = crypto.randomBytes(20).toString('hex');
   user.resetPasswordToken = resetToken;
-  user.resetPasswordExpires = Date.now() + 60000; // 1 hora 3600000
+  user.resetPasswordExpires = Date.now() + 3600000;
 
   await user.save();
 
@@ -180,6 +186,10 @@ sessionRouter.post('/reset/:token', async (req, res) => {
       if (!user) {
         return res.status(400).json({ error: 'Token de restablecimiento de contraseña inválido o expirado.', redirect: '/forgot' });
       }
+
+      if (isValidPassword(user.password, newPassword)) {
+        return res.status(400).json({ error: 'La nueva contraseña no puede ser igual a la contraseña actual.' });
+    }
 
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newPassword, salt);

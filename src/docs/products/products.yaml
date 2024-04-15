@@ -1,0 +1,139 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtienen todos los productos
+      tags: 
+        - Products
+      responses:
+        200:
+          description: Los productos se obtuvieron correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        500:
+          description: Hubo un error al obtener los productos
+
+    post:
+      summary: Crea un nuevo producto
+      tags: 
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        200:
+          description: El producto se ha creado correctamente
+        500:
+          description: Hubo un error al crear el producto
+          
+  /api/products/{id}:
+    get:
+      summary: Obtienen un producto por su ID
+      tags: 
+        - Products
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+      responses:
+        200:
+          description: El producto se obtuvo correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        500:
+          description: Hubo un error al obtener el producto
+
+    put:
+      summary: Actualiza un producto
+      tags: 
+        - Products
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+      requestBody:
+        required: true
+        content:  
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        200:
+          description: El producto se actualizo correctamente
+        500:
+          description: Hubo un error al actualizar el producto
+
+    delete:
+      summary: Elimina un producto
+      tags: 
+        - Products
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del producto
+      responses:
+        200:
+          description: El producto se elimino correctamente
+        500:
+          description: Hubo un error al eliminar el producto
+ 
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: ObjectId
+          description: Autogenerado por mongo
+        title: 
+          type: string
+          description: Titulo del producto
+        description:
+          type: string
+          description: Descripcion del producto
+        price:
+          type: number
+          description: Precio del producto
+        thumbnail:
+          type: string
+          description: Imagen del producto
+        code:
+          type: string
+          description: Código único del producto
+        stock:
+          type: number
+          description: Stock deiponible del producto
+        category:
+          type: string
+          description: Categoría del producto
+        owner:
+          type: mongoose.Schema.Types.ObjectId
+          description: propietario del producto
+      example:
+          "title": "Glen Moray Elgin Classic"
+          "description": "Single Malt Scotch 700 ml"
+          "price": 119
+          "thumbnail": "https://vinotecaligier.com/media/catalog/product/cache/73269a27812eefe…"
+          "code": "code0122999"
+          "stock": 10
+          "category": "Promo"
+          "owner": "661c56c3d0ea0ecf3c364f14"
+

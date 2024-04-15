@@ -6,11 +6,12 @@ const productCollection = "products";
 const ProductSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true, max: 200 },
-    price: {type: Number, default: 0},
+    price: { type: Number, default: 0 },
     thumbnail: { type: String },
     code: { type: String, required: true, unique: true },
     stock: { type: Number, default: 1 },
-    category: { type: String, },
+    category: { type: String },
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true }
 });
 
 ProductSchema.plugin(paginate);

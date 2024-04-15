@@ -79,6 +79,15 @@ const saveProducts = async (req, res) => {
     try {
         const productData = req.body;
 
+                // if (req.user.role !== 'admin' && req.user.role !== 'premium') {
+                //     return res.status(403).json({
+                //         success: false,
+                //         message: "No autorizado para crear productos"
+                //     });
+                // }
+
+                // productData.owner = req.user._id;
+
         if (!productData.title || !productData.description || !productData.code || !productData.price || !productData.stock || !productData.category) {
             CustomError.createError({
                 name: "Error creando el producto",

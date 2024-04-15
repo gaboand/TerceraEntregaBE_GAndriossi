@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, max: 100 },
   password: { type: String, required: true, max: 100 },
   age: { type: Number, required: true, max: 100 },
-  role: { type: String, required: true, max: 100, default: "user" },
+  role: { type: String, required: false, max: 100, enum: ['user', 'admin', 'premium'], default: "user" },
   cartId: {type: mongoose.Schema.Types.ObjectId, ref: "carts", required: true},
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "orders" }],
   resetPasswordToken: { type: String, required: false },

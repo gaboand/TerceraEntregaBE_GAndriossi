@@ -1,7 +1,7 @@
 function updateQuantity(action, quantityId) {
-    var quantityElement = document.getElementById(quantityId);
-    var currentQuantity = parseInt(quantityElement.value);
-    var maxQuantity = parseInt(quantityElement.max);
+    let quantityElement = document.getElementById(quantityId);
+    let currentQuantity = parseInt(quantityElement.value);
+    let maxQuantity = parseInt(quantityElement.max);
 
     if (action === 'plus' && currentQuantity < maxQuantity) {
         quantityElement.value = currentQuantity + 1;

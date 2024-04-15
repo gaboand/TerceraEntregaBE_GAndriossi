@@ -38,6 +38,43 @@ export async function sendPasswordResetEmail(to, link) {
       from: `Soporte <${process.env.EMAIL_SUPPORT}>`,
       to: to,
       subject: 'Instrucciones para restablecer tu contraseña',
-      html: `Hola,<br><br>Recibimos una solicitud para restablecer tu contraseña. Por favor, haz clic en el siguiente enlace para establecer una nueva contraseña: <a href="${link}">Restablecer Contraseña</a><br><br>Si tú no solicitaste esto, por favor ignora este correo electrónico.<br><br>Saludos,<br>Tu Equipo de Soporte`
+      html: `<div><h1 style='color: gray'>Restablecer Contraseña</h1><p>Hola,<br><br>Recibimos una solicitud para restablecer tu contraseña. Por favor, haz clic en el siguiente enlace para establecer una nueva contraseña: <a href="${link}" style="font-size: 16px;">Restablecer Contraseña</a><br><br>Si no solicitaste esto, por favor ignora este correo electrónico.</p><br>Saludos,<br>Tu Equipo de Soporte<br><br> <img src='cid:whisky2' style='width: 800px; height: auto;' /></div>`,
+      attachments: [
+        {
+            filename: "whiskyReset.webp",
+            path: "./src/public/img/whiskyReset.webp",
+            cid: "whisky2",
+        }
+    ]
   });
 }
+
+export async function sendWelcomeEmail(to, userName) {
+  try {
+      await transporter.sendMail({
+          from: `Tienda <${process.env.EMAIL}>`,
+          to: to,
+          subject: "¡Bienvenido a La Tienda del Wihisky!",
+          html: `<div>
+                    <h1 style='color: #3478f7'>¡Hola, ${userName}!</h1>
+                    <p>Estamos encantados de darte la bienvenida a La Tienda del Wihisky!!.</p>
+                    <p>Para empezar, te recomendamos...</p>
+                    <p>Si tienes alguna pregunta, no dudes a contactarnos en <a href="mailto:${process.env.EMAIL}">${process.env.EMAIL}</a>.</p>
+                    <p>¡Gracias por unirte a nosotros y bienvenido a la familia!</p>
+                    <img src='cid:welcomeImage' style='width: 100%; max-width: 600px; height: auto;' />
+                </div>`,
+          attachments: [
+              {
+                  filename: "welcomeImage.webp",
+                  path: "./src/public/img/welcomeImage.webp",
+                  cid: "welcomeImage",
+              }
+          ]
+      });
+      console.log("Correo de bienvenida enviado.");
+  } catch (error) {
+      console.error("Error al enviar el correo de bienvenida:", error);
+      throw error;
+  }
+}
+
