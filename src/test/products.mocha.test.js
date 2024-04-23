@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Assert from "assert";
 import ProductDB from "../dao/mongo/products.js";
 
+const DB_URL = process.env.DB_URL
 const assert = Assert.strict;
 const temporalProduct = {
     title: "test",
@@ -15,7 +16,7 @@ const temporalProduct = {
     _id: "",
 };
 
-mongoose.connect("mongodb+srv://gaboandriossi:eo1IDDWUvmDb8lVO@cluster0.cb92msk.mongodb.net/ecommerce");
+mongoose.connect(DB_URL);
 
 describe("Testing de products dao", () => {
     before(function() {

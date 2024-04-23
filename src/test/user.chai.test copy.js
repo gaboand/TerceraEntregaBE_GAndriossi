@@ -5,7 +5,7 @@ import CartDB from "../dao/mongo/carts.js";
 import OrderDB from "../dao/mongo/orders.js";
 import ProductDB from "../dao/mongo/products.js";
 
-const DB_URL = process.env.DB_URL
+src/test/user.chai.test.js
 const temporalUser = {
     first_name: "test",
     last_name: "test",
@@ -17,7 +17,7 @@ const temporalUser = {
     _id: "",
 };
 
-mongoose.connect(DB_URL);
+mongoose.connect("mongodb+srv://gaboandriossi:eo1IDDWUvmDb8lVO@cluster0.cb92msk.mongodb.net/ecommerce");
 
 describe("Testing de users dao", () => {
     before(function() {
