@@ -2,8 +2,6 @@ import express from "express";
 import { saveCart, getCarts, getCartDetails, addProduct, deleteProduct, empty, deleteCart, updateQuantity, findById} from "../controllers/cart.controller.js";
 import authUser from "../middlewares/authUser.js";
 
-
-
 const cartsRouter = express.Router();
 
 cartsRouter.post("/", saveCart);

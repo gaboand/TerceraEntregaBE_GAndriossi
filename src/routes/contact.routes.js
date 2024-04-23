@@ -1,30 +1,11 @@
 import express from "express";
-import { contactService } from "../repository/index.js";
+import { createContact, getContacts, modifyContact, deleteContact } from "../controllers/contact.controller.js";
 
 const contactRouter = express.Router();
 
-contactRouter.get("/", async (req, res) => {
-  const data = await contactService.getContacts();
-  res.json(data);
-});
-
-contactRouter.post("/", async (req, res) => {
-  const contact = req.body;
-  const data = await contactService.createContact(contact);
-  res.json(data);
-});
-
-contactRouter.put("/:id", async (req, res) => {
-  const id = req.params.id;
-  const contact = req.body;
-  const data = await contactService.modifyContact(id, contact);
-  res.json(data);
-});
-
-contactRouter.delete("/:id", async (req, res) => {
-  const id = req.params.id;
-  const data = await contactService.deleteContact(id);
-  res.json(data);
-});
+contactRouter.get("/", getContacts);
+contactRouter.post("/", createContact);
+contactRouter.put("/:id", modifyContact);
+contactRouter.delete("/:id", deleteContact);
 
 export default contactRouter;

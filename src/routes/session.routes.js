@@ -82,7 +82,7 @@ sessionRouter.get(
     req.session.user = req.user.username || req.user.email;
     req.session.name = req.user.first_name || req.user.email;
     req.session.last_name = req.user.last_name || '';
-    req.session.admin = true;
+    req.session.user = true;
     const cartId = req.user.cartId;
     res.redirect(`/products?cartId=${cartId}`);
   }

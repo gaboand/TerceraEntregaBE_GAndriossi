@@ -18,7 +18,7 @@ const messageDB = new MessageDB();
 const productManager = new ProductsManager("src/products.json");
 const cartManager = new CartsManager("src/carts.json");
 
-viewsRouter.get("/products", authUser, async (req, res) => {
+viewsRouter.get("/products", async (req, res) => { //authUser
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 9;
     const { sort, category } = req.query;
@@ -57,7 +57,7 @@ viewsRouter.get("/products", authUser, async (req, res) => {
     }
 });
 
-viewsRouter.get("/chat", authUser, async (req, res) => {
+viewsRouter.get("/chat", authUser, async (req, res) => { //authUser
 	const messages = await messageDB.findMessages();
 
 	res.render("chat", {
@@ -67,7 +67,7 @@ viewsRouter.get("/chat", authUser, async (req, res) => {
 	});
 });
 
-viewsRouter.get("/carts/:id", authUser, async (req, res) => {
+viewsRouter.get("/carts/:id", async (req, res) => { //authUser
     try {
         const cartId = req.params.id;
         const detailedCart = await cartDB.getCartWithProductDetails(cartId);
@@ -110,7 +110,6 @@ viewsRouter.get("/reset/:token", async (req, res) => {
     });
 });
 
-
 viewsRouter.get("/github",
     passport.authenticate("github", { scope: ["user:email"] }),
   );
@@ -119,7 +118,7 @@ viewsRouter.get("/github",
     passport.authenticate("github", { failureRedirect: "/login" }),
   );
 
-  viewsRouter.get("/realtimeproducts", authAdmin, async (req, res) => {
+  viewsRouter.get("/realtimeproducts", async (req, res) => { // authAdmin
 	const product = await productDB.getProducts();
 	res.render("realtime", {
 		title: "Productos en tiempo real",
@@ -128,8 +127,7 @@ viewsRouter.get("/github",
 	});
 });
 
-
-viewsRouter.get("/carts/:id", authUser, async (req, res) => {
+viewsRouter.get("/carts/:id", async (req, res) => { //authUser
     try {
         const cartId = req.params.id;
         const detailedCart = await cartDB.getCartWithProductDetails(cartId);
@@ -144,7 +142,7 @@ viewsRouter.get("/carts/:id", authUser, async (req, res) => {
     }
 });
 
-viewsRouter.get("/orders/:orderId", authOrder, async (req, res) => {
+viewsRouter.get("/orders/:orderId", async (req, res) => { //authOrder
     try {
         const orderId = req.params.orderId;
         const order = await ordersDao.getOrderById(orderId);
