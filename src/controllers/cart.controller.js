@@ -129,8 +129,8 @@ const deleteProduct = async (req, res) => {
             });
             return;
         }
-        console.log(cid, productEntryId);
-        console.log(deleted);
+        // console.log(cid, productEntryId);
+        // console.log(deleted);
         res.status(200).json({
             success: true,
             message: `El producto ${productEntryId} se borró del carrito ${cid}.`,

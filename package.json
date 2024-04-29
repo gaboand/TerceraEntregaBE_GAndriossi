@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "mocha --timeout 5000 src/test/products.mocha.test.js",
+    "test": "mocha --timeout 15000 src/test/supertest.test.js",
     "start": "node src/app.js",
     "dev": "node --watch src/app.js"
   },
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "chai": "^5.1.0",
-    "mocha": "^10.4.0"
+    "mocha": "^10.4.0",
+    "supertest": "^6.3.4"
   }
 }

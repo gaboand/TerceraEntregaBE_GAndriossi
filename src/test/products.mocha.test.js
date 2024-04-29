@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import Assert from "assert";
 import ProductDB from "../dao/mongo/products.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const DB_URL = process.env.DB_URL
 const assert = Assert.strict;

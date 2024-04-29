@@ -4,7 +4,9 @@ import UserDB from "../dao/mongo/users.js";
 import CartDB from "../dao/mongo/carts.js";
 import OrderDB from "../dao/mongo/orders.js";
 import ProductDB from "../dao/mongo/products.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 const DB_URL = process.env.DB_URL
 const temporalUser = {
     first_name: "test",
