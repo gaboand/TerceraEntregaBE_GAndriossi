@@ -6,6 +6,7 @@ import {addLogger} from "../middlewares/logger.js";
 import crypto from "crypto";
 import { sendPasswordResetEmail, sendWelcomeEmail } from '../controllers/mail.controller.js';
 import bcrypt from "bcrypt";
+import authAdmin from "../middlewares/authAdmin.js";
 
 const sessionRouter = express.Router();
 sessionRouter.use(addLogger);
@@ -205,5 +206,24 @@ sessionRouter.post('/reset/:token', async (req, res) => {
       res.status(500).json({ error: 'Error al restablecer la contraseña.' });
   }
 });
+
+sessionRouter.put('/api/users/premium/:uid', authAdmin, async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const user = await UserModel.findById(uid);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        user.role = user.role === 'premium' ? 'user' : 'premium';
+        await user.save();
+
+        res.status(200).json({ message: `Rol actualizado a ${user.role}` });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al actualizar el rol del usuario' });
+    }
+});
+
 
 export default sessionRouter;

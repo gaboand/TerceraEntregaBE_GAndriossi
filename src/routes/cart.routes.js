@@ -14,6 +14,5 @@ cartsRouter.delete("/:cid/empty", empty);
 cartsRouter.delete("/:cid", deleteCart)
 cartsRouter.put("/:cid/product/:productId/quantity", updateQuantity);
 
-
 export default cartsRouter;
 

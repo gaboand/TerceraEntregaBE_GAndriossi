@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 const productCollection = "products";
+const defaultAdminEmail = "gaboandriossi@gmail.com";
 
 const ProductSchema = new mongoose.Schema({
     title: { type: String, required: true },
@@ -11,7 +12,7 @@ const ProductSchema = new mongoose.Schema({
     code: { type: String, required: true, unique: true },
     stock: { type: Number, default: 1 },
     category: { type: String },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true }
+    owner: { type: String, required: true, default: defaultAdminEmail, ref: "users" }
 });
 
 ProductSchema.plugin(paginate);
