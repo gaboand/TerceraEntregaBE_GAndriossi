@@ -21,7 +21,6 @@ const initializePassportGH = () => {
       async (accessToken, refreshToken, profile, done) => {
           try {
             const email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null;
-            console.log(email);
             
             if (!email) {
               return done(new Error("No se pudo obtener el correo electrónico de GitHub."), null);

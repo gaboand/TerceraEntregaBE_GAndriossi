@@ -56,7 +56,7 @@ app.use(
     store: MongoStore.create({
       mongoUrl: DB_URL,
       mongoOptions: {
-        // useNewUrlParser: true,
+      
       },
       ttl: 3600,
     }),
@@ -72,13 +72,6 @@ initializePassportJWT();
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use((req, res, next) => {
-  console.log("Session ID:", req.sessionID);
-  console.log("Session:", req.session);
-  console.log("User in Request:", req.user);
-  next();
-});
 
 app.use(addLogger);
 app.get('/loggerTest', (req, res) => {

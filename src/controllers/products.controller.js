@@ -127,41 +127,89 @@ const updateProducts = async (req, res) => {
         const { pid } = req.params;
         const productData = req.body;
 
-        const updatedProduct = await productsDao.updateProduct(pid, productData);
-
-        if (!updatedProduct) {
-            res.status(400).json({
+        const product = await productsDao.getProductsById(pid);
+        if (!product) {
+            return res.status(404).json({
                 success: false,
-                message: "No se pudo actualizar el producto",
+                message: "Producto no encontrado",
             });
-            return;
         }
 
-        res.status(200).json({
-            success: true,
-            data: updatedProduct,
-        });
+        const ownerEmail = product.owner;
+        const userEmail = req.user.email;
+
+        if (req.user.role === 'Premium' && ownerEmail !== userEmail) {
+            return res.status(403).json({
+                success: false,
+                message: "No autorizado para actualizar este producto",
+            });
+        }
+
+        if (req.user.role === 'admin' || (req.user.role === 'premium' && ownerEmail === userEmail)) {
+            const updatedProduct = await productsDao.updateProduct(pid, productData);
+            if (!updatedProduct) {
+                return res.status(400).json({
+                    success: false,
+                    message: "No se pudo actualizar el producto",
+                });
+            }
+            return res.status(200).json({
+                success: true,
+                message: "Producto actualizado exitosamente",
+                data: updatedProduct,
+            });
+        } else {
+            return res.status(403).json({
+                success: false,
+                message: "No autorizado para actualizar este producto",
+            });
+        }
     } catch (error) {
-        console.log(error);
+        console.log("updateProducts: Error al actualizar el producto", error);
         res.status(500).json({
             success: false,
             message: error.message,
         });
     }
 };
+
 
 const deleteProducts = async (req, res) => {
     try {
         const { pid } = req.params;
 
-        await productsDao.deleteProductById(pid);
+        const product = await productsDao.getProductsById(pid);
+        
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Producto no encontrado",
+            });
+        }
 
-        const products = await productsDao.getProducts();
+        const ownerEmail = product.owner;
+        const userEmail = req.user.email;
 
-        res.status(200).json({
-            success: true,
-            products,
-        });
+        if (req.user.role === 'premium' && ownerEmail === userEmail) {
+            await productsDao.deleteProductById(pid);
+            return res.status(200).json({
+                success: true,
+                message: "Producto eliminado exitosamente",
+
+            });
+        } else if (req.user.role === 'admin') {
+            await productsDao.deleteProductById(pid);
+            return res.status(200).json({
+                success: true,
+                message: "Producto eliminado exitosamente",
+            });
+        } else {
+            return res.status(403).json({
+                success: false,
+                message: "No autorizado para eliminar este producto",
+            });
+        }
+
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -170,5 +218,6 @@ const deleteProducts = async (req, res) => {
         });
     }
 };
+
 
 export { getProducts, getProductId, saveProducts, updateProducts, deleteProducts };

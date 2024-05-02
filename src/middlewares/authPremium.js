@@ -4,7 +4,7 @@ function authPremium(req, res, next) {
     if (!userRole) {
         return res.sendStatus(401);
     }
-    if (userRole === "Premium") {
+    if (userRole === "Premium") {  
         return next();
     } else {
         return res.sendStatus(403);

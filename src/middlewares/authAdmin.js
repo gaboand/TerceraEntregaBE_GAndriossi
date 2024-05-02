@@ -6,9 +6,7 @@ function authAdmin(req, res, next) {
     }
     if (userRole === "admin") {
         return next();
-    } else {
-        return res.sendStatus(403);
-    }
+    } next();
 }
 
 export default authAdmin;

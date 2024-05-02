@@ -51,11 +51,9 @@ export default class ProductDB {
 
     async updateProduct(id, product) {
         try {
-            console.log("Actualizando producto:", id, "con:", product);
             const result = await ProductsModel.updateOne({ _id: id }, product);
     
             if (result.nModified === 0) {
-                console.log("El producto no se modificó.");
                 return null; 
             }
     
@@ -80,13 +78,11 @@ export default class ProductDB {
         try {
             const product = await ProductsModel.findById(productId);
             if (!product) {
-                console.log("Producto no encontrado:", productId);
                 return null;
             }
             
             const newStock = product.stock + quantityChange;
             if (newStock < 0) {
-                console.error("Stock no puede ser negativo:", productId);
                 return null;
             }
     
