@@ -1,4 +1,5 @@
 import { CartModel } from "../mongo/models/carts.model.js"; 
+import { ProductsModel } from "../mongo/models/products.model.js";
 
 export default class CartDB {
     async createCart(cart) {
@@ -61,22 +62,40 @@ export default class CartDB {
         }
     }
 
-    async addProductToCart(cid, productId, quantity) {
-    try{
-        const cart = await CartModel.findById(cid);
-        const existingProductIndex = cart.products.findIndex(p => p.productId.equals(productId));
+    async addProductToCart(cid, productId, quantity, otherDetails, user) {
+        try {
+            if (!user || !user.role || !user.email) {
+                throw new Error("Información de usuario no completa o no proporcionada");
+            }
     
-        if (existingProductIndex >= 0) {
-            cart.products[existingProductIndex].quantity += quantity;
-        } else {
-            cart.products.push({ productId, quantity });
+            const cart = await CartModel.findById(cid);
+            if (!cart) {
+                throw new Error("Carrito no encontrado");
+            }
+    
+            const product = await ProductsModel.findById(productId);
+            if (!product) {
+                throw new Error("Producto no encontrado");
+            }
+    
+            if (user.role === 'premium' && product.owner === user.email) {
+                throw new Error("No puede agregar su propio producto al carrito");
+            }
+    
+            const existingProductIndex = cart.products.findIndex(p => p.productId.equals(productId));
+        
+            if (existingProductIndex >= 0) {
+                cart.products[existingProductIndex].quantity += quantity;
+            } else {
+                cart.products.push({ productId, quantity });
+            }
+            
+            const updatedCart = await cart.save();
+            return updatedCart;
+        } catch (error) {
+
+            throw error;
         }
-    
-        const updatedCart = await cart.save();
-        return updatedCart;
-    } catch (error) {
-        throw error;
-    }
     }
 
     async deleteProductFromCart(id, productEntryId) {

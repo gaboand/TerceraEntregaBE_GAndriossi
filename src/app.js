@@ -73,6 +73,13 @@ initializePassportJWT();
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use((req, res, next) => {
+  console.log("Session ID:", req.sessionID);
+  console.log("Session:", req.session);
+  console.log("User in Request:", req.user);
+  next();
+});
+
 app.use(addLogger);
 app.get('/loggerTest', (req, res) => {
     req.logger.debug('Depurar');
@@ -100,7 +107,8 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({ 
-  origin: ["http://localhost:3000", "http://127.0.0.1:5500"]
+  origin: ["http://localhost:3000", "http://127.0.0.1:5500"],
+  credentials: true
 }));
 
 io.on("connection", (socket) => {

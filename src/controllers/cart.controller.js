@@ -1,4 +1,5 @@
 import {cartsDao} from "../dao/index.js"
+import { ProductsModel } from "../dao/mongo/models/products.model.js";
 
 const saveCart = async (req, res) => {
 	try {
@@ -84,11 +85,13 @@ const getCartDetails = async (req, res) => {
 };
 
 const addProduct = async (req, res) => {
+    console.log("addProduct: Iniciando proceso de añadir producto al carrito.");
     try {
         const { cid } = req.params;
         const { pid, quantity, otherDetails } = req.body;
 
         if (!pid || !quantity) {
+            console.log("addProduct: Faltan datos del producto.");
             res.status(400).json({
                 success: false,
                 message: "Faltan datos del producto (ID y cantidad).",
@@ -96,8 +99,30 @@ const addProduct = async (req, res) => {
             return;
         }
 
-        const updatedCart = await cartsDao.addProductToCart(cid, pid, quantity, otherDetails);
+        console.log("addProduct: Buscando producto con ID:", pid);
+        const product = await ProductsModel.findById(pid);
+        if (!product) {
+            console.log("addProduct: Producto no encontrado con ID:", pid);
+            res.status(404).json({
+                success: false,
+                message: "Producto no encontrado",
+            });
+            return;
+        }
+
+        if (req.user.role === 'premium' && product.owner === req.user.email) {
+            console.log("addProduct: Usuario premium intentando agregar su propio producto al carrito.");
+            res.status(403).json({
+                success: false,
+                message: "No puede agregar su propio producto al carrito",
+            });
+            return;
+        }
+
+        console.log("addProduct: Agregando producto al carrito para usuario:", req.user.email);
+        const updatedCart = await cartsDao.addProductToCart(cid, pid, quantity, otherDetails, req.user);
         if (!updatedCart) {
+            console.log("addProduct: No se pudo agregar el producto al carrito.");
             res.status(404).json({
                 success: false,
                 message: `No se pudo agregar el producto ${pid} al carrito ${cid}.`,
@@ -105,18 +130,22 @@ const addProduct = async (req, res) => {
             return;
         }
 
+        console.log("addProduct: Producto agregado al carrito exitosamente.");
         res.status(200).json({
             success: true,
             message: `Producto ${pid} agregado al carrito ${cid}.`,
             cart: updatedCart,
         });
     } catch (error) {
+        console.log("addProduct: Error en el proceso de añadir producto al carrito:", error);
         res.status(500).json({
             success: false,
             message: error.message,
         });
     }
 };
+
+
 
 const deleteProduct = async (req, res) => {
     try {
